@@ -17,5 +17,5 @@
 3. Local connection to spark server
 
 
-**Post indexing/temp**
+**Post indexing/temp**:
 print(str(line).split(",")[2],'\n') for line in hack_rdd.take(3) 
