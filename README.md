@@ -12,9 +12,7 @@
 
 ## TODO:
 
-1. Preform analysis on text files (old)
-2. Clean CSV files
-3. Local connection to spark server
+https://docs.google.com/document/d/14OqVjs5LJWj4ZFCMwuRSA8Py-PfKTLcq6YMmWLczV5E/
 
 
 **Post indexing/temp**:
