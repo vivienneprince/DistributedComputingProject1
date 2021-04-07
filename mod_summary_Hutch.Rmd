@@ -1,0 +1,182 @@
+---
+title: "mod summary"
+author: "RH"
+date: "4/6/2021"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(message = FALSE,warning = FALSE)
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(tidy=TRUE)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=70))
+knitr::opts_chunk$set(fig.height=4, fig.width=6)
+```
+
+
+```{r}
+library(data.table)
+  library(tidyverse)
+  library(ggplot2)
+  library(plotly)
+  library(listviewer)
+  library(gapminder)
+library(ggvis)
+library(corrplot)
+library  (dplyr)
+library(RColorBrewer)
+library(DataExplorer)
+library(grid)
+library(gridExtra)
+library(boot)
+library(haven)
+library(cowplot)
+```
+
+
+```{r}
+#getwd()
+
+setwd('/Users/Hutch/Desktop')
+```
+
+```{r}
+df = read_csv('/Users/Hutch/Desktop/classic.summary.csv')
+```
+
+```{r}
+view(df)
+```
+
+```{r}
+df = df %>% mutate(Book = as.factor(book))
+```
+
+```{r}
+view(df)
+```
+
+```{r}
+dtemp = df %>% select(-Book,-average,-NSaverage)
+#view(dtemp)
+
+```
+
+
+
+
+```{r}
+p = ggplot(data = df, aes(x=Book,y=average, fill = Book) ) +
+geom_col() +
+  labs(title = "Classic Literature & Internet",
+       subtitle = '',
+       y = 'Average') +
+  guides(fill=FALSE) + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+theme_classic() +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+p
+dev.copy(png,'CI.png')
+dev.off
+```
+
+
+
+```{r}
+
+pNS = ggplot(data = df, aes(x=Book,y=NSaverage, fill = Book) ) +
+geom_col() +
+  labs(title = "Classic Literature & Internet",
+       subtitle = 'No Stop Words',
+       y = 'Average') +
+  guides(fill=FALSE) + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+theme_classic() +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+pNS 
+dev.copy(png,'CI_NS.png')
+dev.off
+```
+
+```{r}
+
+require(gridExtra)
+
+grid.arrange(p, pNS, ncol=2)
+dev.copy(png,'CI_grid.png')
+dev.off
+```
+
+
+```{r}
+pdf("p.pdf")
+print(p)
+dev.off()
+```
+
+```{r}
+pdf("pNS.png")
+print(pNS)
+dev.off()
+
+```
+
+
+```{r}
+overallav = mean(df$average)
+overallavNS = mean(df$NSaverage)
+overallav
+overallavNS
+```
+
+```{r}
+justclassic = slice(df,-9,-8)
+coverallav = mean(justclassic$average)
+coverallavNS = mean(justclassic$NSaverage)
+coverallav = round(coverallav,digits = 2)
+coverallavNS = round(coverallavNS,digits = 2)
+coverallav
+coverallavNS
+```
+
+
+```{r}
+int = slice(df,-(1:7))
+intoverallav = round(mean(int$average),digits = 2)
+intoverallavNS = round(mean(int$NSaverage),digits = 2)
+intoverallav
+intoverallavNS
+```
+
+```{r}
+
+colc = c(coverallav,coverallavNS,intoverallav,intoverallavNS)
+coln = c('Classics', 'Classics No Stop','Internet', 'Internet No Stop')
+sdf = data.frame(coln,colc)
+row.names(sdf) = c('Classics', 'Classics No Stop','Internet', 'Internet No Stop')
+
+```
+
+labs(title = "Classic Literature & Internet",
+       subtitle = 'No Stop Words',
+       y = 'Average')
+```{r}
+
+pNS = ggplot(data = sdf, aes(x=coln,colc, fill = coln) ) +
+geom_col() +
+  labs(title = "Classic Literature vs. Internet",
+       subtitle = 'Average Word Length',
+       x = "Source",
+       y = 'Length') +
+  guides(fill=FALSE) + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+theme_classic() +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+pNS
+dev.copy(png,'CI_avg.png')
+dev.off
+```
